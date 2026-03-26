@@ -7,6 +7,7 @@ const normalizePropertyType = (value) => {
   if (raw === "apartments") return "apartment";
   if (raw === "houses") return "house";
   return raw;
+
 };
 
 const parseStringArrayInput = (value) => {
