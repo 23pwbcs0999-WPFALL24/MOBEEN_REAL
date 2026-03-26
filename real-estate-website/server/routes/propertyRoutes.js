@@ -1,7 +1,5 @@
 import { Router } from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import {
   createProperty,
   deleteProperty,
@@ -14,35 +12,7 @@ import { authorize, protect } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-const uploadRoot = process.env.VERCEL ? "/tmp/uploads" : path.join(process.cwd(), "uploads");
-
-const uploadPaths = {
-  images: path.join(uploadRoot, "propertyImages"),
-  video: path.join(uploadRoot, "propertyVideos"),
-  brochure: path.join(uploadRoot, "propertyDocs")
-};
-
-Object.values(uploadPaths).forEach((dir) => {
-  fs.mkdirSync(dir, { recursive: true });
-});
-
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    if (file.fieldname === "video") {
-      return callback(null, uploadPaths.video);
-    }
-
-    if (file.fieldname === "brochure") {
-      return callback(null, uploadPaths.brochure);
-    }
-
-    return callback(null, uploadPaths.images);
-  },
-  filename: (req, file, callback) => {
-    const extension = path.extname(file.originalname);
-    callback(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`);
-  }
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, callback) => {
   if (file.fieldname === "images") {
@@ -69,7 +39,13 @@ const fileFilter = (req, file, callback) => {
   return callback(new Error("Unsupported upload field"));
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 25 * 1024 * 1024
+  }
+});
 
 router.get("/", getProperties);
 router.get("/:id", getPropertyById);

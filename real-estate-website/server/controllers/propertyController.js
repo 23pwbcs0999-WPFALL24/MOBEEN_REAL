@@ -1,5 +1,6 @@
 import Property from "../models/Property.js";
 import User from "../models/User.js";
+import { uploadMediaFile } from "../utils/cloudinary.js";
 
 const normalizePropertyType = (value) => {
   const raw = String(value || "house").toLowerCase().trim();
@@ -90,12 +91,22 @@ export const getPropertyById = async (req, res, next) => {
 
 export const createProperty = async (req, res, next) => {
   try {
-    const imagePaths = (req.files?.images || []).map((file) => `/uploads/propertyImages/${file.filename}`);
+    const imagePaths = await Promise.all(
+      (req.files?.images || []).map((file) =>
+        uploadMediaFile(file, { folder: "real-estate/properties/images", resourceType: "image" })
+      )
+    );
     const uploadedVideoPath = req.files?.video?.[0]
-      ? `/uploads/propertyVideos/${req.files.video[0].filename}`
+      ? await uploadMediaFile(req.files.video[0], {
+          folder: "real-estate/properties/videos",
+          resourceType: "video"
+        })
       : "";
     const uploadedBrochurePath = req.files?.brochure?.[0]
-      ? `/uploads/propertyDocs/${req.files.brochure[0].filename}`
+      ? await uploadMediaFile(req.files.brochure[0], {
+          folder: "real-estate/properties/docs",
+          resourceType: "raw"
+        })
       : "";
 
     const property = await Property.create({
@@ -132,14 +143,25 @@ export const updateProperty = async (req, res, next) => {
     }
 
     const updates = { ...req.body };
-    const uploadedImagePaths = (req.files?.images || []).map(
-      (file) => `/uploads/propertyImages/${file.filename}`
+    const uploadedImagePaths = await Promise.all(
+      (req.files?.images || []).map((file) =>
+        uploadMediaFile(file, {
+          folder: "real-estate/properties/images",
+          resourceType: "image"
+        })
+      )
     );
     const uploadedVideoPath = req.files?.video?.[0]
-      ? `/uploads/propertyVideos/${req.files.video[0].filename}`
+      ? await uploadMediaFile(req.files.video[0], {
+          folder: "real-estate/properties/videos",
+          resourceType: "video"
+        })
       : "";
     const uploadedBrochurePath = req.files?.brochure?.[0]
-      ? `/uploads/propertyDocs/${req.files.brochure[0].filename}`
+      ? await uploadMediaFile(req.files.brochure[0], {
+          folder: "real-estate/properties/docs",
+          resourceType: "raw"
+        })
       : "";
     const removeImages = parseStringArrayInput(req.body.removeImages);
     const imageUrls = parseStringArrayInput(req.body.imageUrls);
