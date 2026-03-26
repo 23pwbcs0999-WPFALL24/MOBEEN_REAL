@@ -41,6 +41,15 @@ app.get("/api/health", (_, res) => {
   res.json({ ok: true, message: "API is running" });
 });
 
+app.use("/api", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/contact", contactRoutes);
