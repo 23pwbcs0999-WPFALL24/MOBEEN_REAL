@@ -14,10 +14,12 @@ import { authorize, protect } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
+const uploadRoot = process.env.VERCEL ? "/tmp/uploads" : path.join(process.cwd(), "uploads");
+
 const uploadPaths = {
-  images: "uploads/propertyImages",
-  video: "uploads/propertyVideos",
-  brochure: "uploads/propertyDocs"
+  images: path.join(uploadRoot, "propertyImages"),
+  video: path.join(uploadRoot, "propertyVideos"),
+  brochure: path.join(uploadRoot, "propertyDocs")
 };
 
 Object.values(uploadPaths).forEach((dir) => {

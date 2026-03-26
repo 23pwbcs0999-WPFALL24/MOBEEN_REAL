@@ -16,12 +16,13 @@ connectDB();
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const uploadStaticPath = process.env.VERCEL ? "/tmp/uploads" : path.join(__dirname, "uploads");
 
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(uploadStaticPath));
 
 app.get("/", (_, res) => {
   res.json({
