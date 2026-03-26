@@ -11,7 +11,9 @@ import contactRoutes from "./routes/contactRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
-connectDB();
+connectDB().catch((error) => {
+  console.error("Initial DB connection failed:", error.message);
+});
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
