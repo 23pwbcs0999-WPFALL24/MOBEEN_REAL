@@ -40,6 +40,15 @@ const parseStringArrayInput = (value) => {
   return [];
 };
 
+const toSafeFileBase = (value) => {
+  const safe = String(value || "property-brochure")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return safe || "property-brochure";
+};
+
 export const getProperties = async (req, res, next) => {
   try {
     const { location, area, type, minPrice, maxPrice, bedrooms, search, agent, limit = 12 } = req.query;
@@ -84,6 +93,36 @@ export const getPropertyById = async (req, res, next) => {
     }
 
     res.json({ property });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const downloadPropertyBrochure = async (req, res, next) => {
+  try {
+    const property = await Property.findById(req.params.id).select("title brochureUrl");
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    const brochureUrl = String(property.brochureUrl || "").trim();
+    if (!brochureUrl) {
+      return res.status(404).json({ message: "Brochure not available" });
+    }
+
+    const response = await fetch(brochureUrl);
+    if (!response.ok) {
+      return res.status(502).json({ message: "Unable to fetch brochure file" });
+    }
+
+    const contentType = response.headers.get("content-type") || "application/pdf";
+    const buffer = Buffer.from(await response.arrayBuffer());
+    const fileName = `${toSafeFileBase(property.title)}-brochure.pdf`;
+
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Content-Disposition", `attachment; filename=\"${fileName}\"`);
+    return res.send(buffer);
   } catch (error) {
     next(error);
   }

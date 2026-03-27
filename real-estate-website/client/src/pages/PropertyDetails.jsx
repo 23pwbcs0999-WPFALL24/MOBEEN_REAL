@@ -5,14 +5,10 @@ import AgentCard from "../components/AgentCard";
 import { fetchPropertyById, toggleFavorite } from "../services/propertyService";
 import { formatPrice, resolveImageUrl, resolveMapEmbedUrl } from "../utils/helpers";
 
-const buildBrochureDownloadUrl = (url) => {
-  if (!url) return "";
-
-  if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
-    return url.replace("/upload/", "/upload/fl_attachment/");
-  }
-
-  return url;
+const buildBrochureDownloadUrl = (propertyId, brochureUrl) => {
+  if (!propertyId || !brochureUrl) return "";
+  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  return `${apiBase}/properties/${propertyId}/brochure-download`;
 };
 
 function PropertyDetails() {
@@ -50,7 +46,7 @@ function PropertyDetails() {
   const mapEmbedUrl = resolveMapEmbedUrl(property.mapUrl, property.location);
   const videoUrl = resolveImageUrl(property.videoUrl);
   const brochureUrl = resolveImageUrl(property.brochureUrl);
-  const brochureDownloadUrl = buildBrochureDownloadUrl(brochureUrl);
+  const brochureDownloadUrl = buildBrochureDownloadUrl(property._id, brochureUrl);
   const galleryImages = (property.images || []).map((image) => resolveImageUrl(image));
 
   return (

@@ -2,6 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import {
   createProperty,
+  downloadPropertyBrochure,
   deleteProperty,
   getProperties,
   getPropertyById,
@@ -48,6 +49,7 @@ const upload = multer({
 });
 
 router.get("/", getProperties);
+router.get("/:id/brochure-download", downloadPropertyBrochure);
 router.get("/:id", getPropertyById);
 router.post(
   "/",
