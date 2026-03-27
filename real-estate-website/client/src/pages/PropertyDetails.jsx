@@ -5,16 +5,11 @@ import AgentCard from "../components/AgentCard";
 import { fetchPropertyById, toggleFavorite } from "../services/propertyService";
 import { formatPrice, resolveImageUrl, resolveMapEmbedUrl } from "../utils/helpers";
 
-const buildBrochureDownloadUrl = (url, title) => {
+const buildBrochureDownloadUrl = (url) => {
   if (!url) return "";
 
-  const safeName = `${String(title || "property-brochure")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "property-brochure"}.pdf`;
-
   if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
-    return url.replace("/upload/", `/upload/fl_attachment:${safeName}/`);
+    return url.replace("/upload/", "/upload/fl_attachment/");
   }
 
   return url;
@@ -55,7 +50,7 @@ function PropertyDetails() {
   const mapEmbedUrl = resolveMapEmbedUrl(property.mapUrl, property.location);
   const videoUrl = resolveImageUrl(property.videoUrl);
   const brochureUrl = resolveImageUrl(property.brochureUrl);
-  const brochureDownloadUrl = buildBrochureDownloadUrl(brochureUrl, property.title);
+  const brochureDownloadUrl = buildBrochureDownloadUrl(brochureUrl);
   const galleryImages = (property.images || []).map((image) => resolveImageUrl(image));
 
   return (
