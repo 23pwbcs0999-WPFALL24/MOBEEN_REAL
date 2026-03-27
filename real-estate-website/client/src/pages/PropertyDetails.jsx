@@ -5,6 +5,21 @@ import AgentCard from "../components/AgentCard";
 import { fetchPropertyById, toggleFavorite } from "../services/propertyService";
 import { formatPrice, resolveImageUrl, resolveMapEmbedUrl } from "../utils/helpers";
 
+const buildBrochureDownloadUrl = (url, title) => {
+  if (!url) return "";
+
+  const safeName = `${String(title || "property-brochure")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "property-brochure"}.pdf`;
+
+  if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
+    return url.replace("/upload/", `/upload/fl_attachment:${safeName}/`);
+  }
+
+  return url;
+};
+
 function PropertyDetails() {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
@@ -40,6 +55,7 @@ function PropertyDetails() {
   const mapEmbedUrl = resolveMapEmbedUrl(property.mapUrl, property.location);
   const videoUrl = resolveImageUrl(property.videoUrl);
   const brochureUrl = resolveImageUrl(property.brochureUrl);
+  const brochureDownloadUrl = buildBrochureDownloadUrl(brochureUrl, property.title);
   const galleryImages = (property.images || []).map((image) => resolveImageUrl(image));
 
   return (
@@ -63,7 +79,7 @@ function PropertyDetails() {
       <div className="grid gap-6 lg:grid-cols-3">
         <article className="card p-6 lg:col-span-2">
           <p className="text-sm uppercase tracking-widest text-brass">{property.type}</p>
-          <h1 className="mt-2 text-4xl">{property.title}</h1>
+          <h1 className="mt-2 break-words text-3xl sm:text-4xl">{property.title}</h1>
           <p className="mt-3 text-2xl font-bold">{displayPrice || "Price on request"}</p>
           <p className="mt-4 leading-relaxed text-slate">{property.description}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -96,11 +112,11 @@ function PropertyDetails() {
                 <div className="flex flex-wrap items-center gap-3">
                   <p className="text-sm font-semibold text-slate">Brochure PDF</p>
                   <a
-                    href={brochureUrl}
+                    href={brochureDownloadUrl || brochureUrl}
                     download
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full border border-ink px-4 py-2 text-sm font-semibold text-ink"
+                    className="rounded-full border border-ink px-4 py-2 text-xs font-semibold text-ink sm:text-sm"
                   >
                     Download Brochure
                   </a>

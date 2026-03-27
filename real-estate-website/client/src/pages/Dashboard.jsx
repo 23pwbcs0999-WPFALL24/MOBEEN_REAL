@@ -155,7 +155,7 @@ function Dashboard() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brass">Admin Panel</p>
-            <h1 className="mt-2 text-4xl">Website Manager</h1>
+            <h1 className="mt-2 text-3xl sm:text-4xl">Website Manager</h1>
             <p className="mt-2 text-slate">Only tools you need: add, edit, delete properties.</p>
           </div>
           <div className="flex gap-2">
@@ -198,19 +198,19 @@ function Dashboard() {
           return (
           <article key={property._id} className="rounded-2xl border border-mist bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
+              <div className="flex min-w-0 items-start gap-3">
                 <img
                   src={resolveImageUrl(property.images?.[0]) || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200"}
                   alt={property.title}
                   className="h-16 w-24 rounded-lg border border-mist object-cover"
                 />
-                <div>
-                <h3 className="text-lg font-semibold text-ink">{property.title}</h3>
-                <p className="text-sm text-slate">{property.location}</p>
+                <div className="min-w-0">
+                <h3 className="break-words text-lg font-semibold text-ink">{property.title}</h3>
+                <p className="break-words text-sm text-slate">{property.location}</p>
                 <p className="mt-1 text-sm font-semibold text-ink">{displayPrice || "Price on request"}</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => startEdit(property)}
                   className="rounded-full border border-ink px-4 py-2 text-sm font-semibold text-ink"

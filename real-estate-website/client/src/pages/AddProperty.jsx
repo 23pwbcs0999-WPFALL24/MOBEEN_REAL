@@ -76,8 +76,8 @@ function AddProperty() {
 
   return (
     <section className="mx-auto max-w-3xl">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-4xl">Add Property</h1>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl sm:text-4xl">Add Property</h1>
         <Link to="/dashboard" className="rounded-full border border-ink px-4 py-2 text-sm font-semibold">
           Back to Admin
         </Link>

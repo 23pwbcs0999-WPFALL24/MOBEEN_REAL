@@ -17,7 +17,7 @@ function App() {
   return (
     <div className="min-h-screen bg-sand text-ink">
       {!isAdminView && <Navbar />}
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/properties" element={<Properties />} />
